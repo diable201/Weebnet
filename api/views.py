@@ -7,9 +7,10 @@ from rest_framework.views import APIView
 from api.serializers import (
     GenreBaseSerializer, AnimeBaseSerializer,
     AnimeListResponseSerializer, AnimeRetrieveResponseSerializer,
-    MangaBaseSerializer, MangaDetailSerializer
+    MangaBaseSerializer, MangaDetailSerializer,
+    LightNovelBaseSerializer, LightNovelDetailSerializer
 )
-from api.models import Genre, Anime, Manga
+from api.models import Genre, Anime, Manga, LightNovel
 
 
 class GenreViewSet(
@@ -84,3 +85,22 @@ class MangaViewSet(
         if self.action == 'retrieve' or self.action == 'update':
             return MangaDetailSerializer
         return MangaBaseSerializer
+
+
+class LightNovelViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin
+):
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return LightNovel.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == 'retrieve' or self.action == 'update':
+            return LightNovelDetailSerializer
+        return LightNovelBaseSerializer

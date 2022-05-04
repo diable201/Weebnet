@@ -142,13 +142,64 @@ class Manga(TimestampMixin):
         Genre,
         on_delete=models.CASCADE,
         null=True,
-        related_name='genre',
+        related_name='manga',
         verbose_name='Жанр'
     )
 
     class Meta:
         verbose_name = 'Манга'
         verbose_name_plural = 'Манга'
+
+    def __str__(self):
+        return f'{self.id}: {self.title} | {self.score}'
+
+
+class LightNovel(TimestampMixin):
+    ONGOING = 'ONGOING'
+    RELEASED = 'RELEASED'
+
+    LIGHT_NOVEL_STATUS_CHOICES = (
+        (ONGOING, 'Онгоинг'),
+        (RELEASED, 'Выпущено'),
+    )
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name='Название'
+    )
+    volumes = models.IntegerField(
+        default=0,
+        verbose_name='Количество томов'
+    )
+    chapters = models.IntegerField(
+        default=0,
+        verbose_name='Количество глав'
+    )
+    score = models.FloatField(
+        default=0.0,
+        verbose_name='Рейтинг'
+    )
+    status = models.CharField(
+        choices=LIGHT_NOVEL_STATUS_CHOICES,
+        blank=True,
+        max_length=255,
+        verbose_name='Статус'
+    )
+    synopsis = models.TextField(
+        blank=True,
+        verbose_name='Синопсис'
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='light_novel',
+        verbose_name='Жанр'
+    )
+
+    class Meta:
+        verbose_name = 'Ранобэ'
+        verbose_name_plural = 'Ранобэ'
 
     def __str__(self):
         return f'{self.id}: {self.title} | {self.score}'
@@ -163,7 +214,7 @@ class Image(TimestampMixin):
         verbose_name='Аниме'
     )
     image = models.ImageField(
-        upload_to='anime/',
+        upload_to='images/',
         validators=[validate_size, validate_extension],
         null=True,
         verbose_name='Изображение'

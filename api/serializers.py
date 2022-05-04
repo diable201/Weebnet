@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Anime, Genre, Manga
+from api.models import Anime, Genre, Manga, LightNovel
 
 
 class GenreBaseSerializer(serializers.ModelSerializer):
@@ -67,4 +67,18 @@ class MangaDetailSerializer(MangaBaseSerializer):
 
     class Meta:
         model = Manga
+        fields = ('id', 'title', 'volumes', 'score', 'status', 'synopsis', 'genre_id')
+
+
+class LightNovelBaseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = LightNovel
+        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status')
+
+
+class LightNovelDetailSerializer(LightNovelBaseSerializer):
+
+    class Meta:
+        model = LightNovel
         fields = ('id', 'title', 'volumes', 'score', 'status', 'synopsis', 'genre_id')

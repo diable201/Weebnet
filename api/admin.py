@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Anime, Genre, Image, Manga
+from .models import Anime, Genre, Image, Manga, LightNovel
 
 
 @admin.register(Anime)
@@ -18,6 +18,20 @@ class AnimeAdmin(admin.ModelAdmin):
 
 @admin.register(Manga)
 class MangaAdmin(admin.ModelAdmin):
+    ordering = ('id',)
+    list_display = (
+        'id',
+        'title',
+        'volumes',
+        'score',
+        'status',
+    )
+    list_editable = ('status',)
+    list_filter = ('status', 'genre')
+
+
+@admin.register(LightNovel)
+class LightNovelAdmin(admin.ModelAdmin):
     ordering = ('id',)
     list_display = (
         'id',
