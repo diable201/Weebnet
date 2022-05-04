@@ -88,17 +88,38 @@ class AnimeListResponseSerializer(AnimeBaseSerializer):
 
 
 class MangaBaseSerializer(serializers.ModelSerializer):
+    genre_id = serializers.IntegerField()
+
+    def validate_genre_id(self, value):
+        if value and not Genre.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Жанра не существует")
+        return value
+
+    def validate_volumes(self, value):
+        if value and value < 0:
+            raise serializers.ValidationError("Количество томов должно быть больше нуля")
+        return value
+
+    def validate_chapters(self, value):
+        if value and value < 0:
+            raise serializers.ValidationError("Количество глав должно быть больше нуля")
+        return value
+
+    def validate_score(self, value):
+        if value and value < 0:
+            raise serializers.ValidationError("Рейтинг должен быть больше положительным числом")
+        return value
 
     class Meta:
         model = Manga
-        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status')
+        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status', 'genre_id')
 
 
 class MangaDetailSerializer(MangaBaseSerializer):
 
     class Meta:
         model = Manga
-        fields = ('id', 'title', 'volumes', 'score', 'status', 'synopsis', 'genre_id')
+        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status', 'synopsis', 'genre_id')
 
 
 class LightNovelBaseSerializer(serializers.ModelSerializer):

@@ -10,6 +10,13 @@ class UserBaseSerializer(serializers.ModelSerializer):
         write_only=True
     )
 
+    def validate_password(self, value):
+        if value and value < 8:
+            raise serializers.ValidationError("Пароль слишком короткий")
+        elif value and value > 128:
+            raise serializers.ValidationError("Пароль слишком длинный")
+        return value
+
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name', 'date_joined', 'avatar', 'date_of_birth', 'password']
