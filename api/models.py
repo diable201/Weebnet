@@ -100,6 +100,18 @@ class Anime(TimestampMixin):
         verbose_name = 'Аниме'
         verbose_name_plural = 'Аниме'
 
+    def to_json(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'source': self.source,
+            'episodes': self.episodes,
+            'score': self.score,
+            'status': self.status,
+            'synopsis': self.synopsis,
+            'genre': self.genre.name
+        }
+
     def __str__(self):
         return f'{self.id}: {self.title} | {self.score}'
 
@@ -150,6 +162,18 @@ class Manga(TimestampMixin):
     class Meta:
         verbose_name = 'Манга'
         verbose_name_plural = 'Манга'
+
+    def to_json(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'volumes': self.volumes,
+            'chapters': self.chapters,
+            'score': self.score,
+            'status': self.status,
+            'synopsis': self.synopsis,
+            'genre': self.genre.name
+        }
 
     def __str__(self):
         return f'{self.id}: {self.title} | {self.score}'

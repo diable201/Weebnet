@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -30,9 +31,7 @@ class GenreViewSet(
         return GenreBaseSerializer
 
 
-class GenreSearchView(
-    APIView
-):
+class GenreSearchView(APIView):
     permission_classes = (IsAuthenticated,)
     queryset = Genre.objects.all()
     serializer_class = GenreBaseSerializer
@@ -68,6 +67,21 @@ class AnimeViewSet(
         return AnimeBaseSerializer
 
 
+class AnimeSearchView(APIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Anime.objects.all()
+    serializer_class = AnimeBaseSerializer
+
+    @action(methods=["GET"], detail=False)
+    def get(self, request):
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = self.queryset.filter(title__icontains=search)
+            serializer = self.serializer_class(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
+
+
 class MangaViewSet(
     viewsets.GenericViewSet,
     mixins.CreateModelMixin,
@@ -87,6 +101,21 @@ class MangaViewSet(
         return MangaBaseSerializer
 
 
+class MangaSearchView(APIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = Manga.objects.all()
+    serializer_class = MangaBaseSerializer
+
+    @action(methods=["GET"], detail=False)
+    def get(self, request):
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = self.queryset.filter(title__icontains=search)
+            serializer = self.serializer_class(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
+
+
 class LightNovelViewSet(
     viewsets.GenericViewSet,
     mixins.CreateModelMixin,
@@ -104,6 +133,21 @@ class LightNovelViewSet(
         if self.action == 'retrieve' or self.action == 'update':
             return LightNovelDetailSerializer
         return LightNovelBaseSerializer
+
+
+class LightNovelSearchView(APIView):
+    permission_classes = (IsAuthenticated,)
+    queryset = LightNovel.objects.all()
+    serializer_class = LightNovelBaseSerializer
+
+    @action(methods=["GET"], detail=False)
+    def get(self, request):
+        search = self.request.query_params.get('search', None)
+        if search:
+            queryset = self.queryset.filter(title__icontains=search)
+            serializer = self.serializer_class(queryset, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response([], status=status.HTTP_200_OK)
 
 
 class CommentViewSet(viewsets.GenericViewSet):
@@ -132,3 +176,15 @@ class CommentViewSet(viewsets.GenericViewSet):
         comments = self.get_queryset()
         serializer = self.get_serializer(comments, many=True)
         return Response(serializer.data)
+
+
+def anime_top_ten(request):
+    anime = Anime.objects.all().order_by('-score')[:10]
+    anime_json = [_.to_json() for _ in anime]
+    return JsonResponse(anime_json, safe=False)
+
+
+def manga_top_ten(request):
+    manga = Manga.objects.all().order_by('-score')[:10]
+    manga_json = [_.to_json() for _ in manga]
+    return JsonResponse(manga_json, safe=False)

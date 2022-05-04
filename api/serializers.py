@@ -88,6 +88,7 @@ class AnimeListResponseSerializer(AnimeBaseSerializer):
 
 
 class MangaBaseSerializer(serializers.ModelSerializer):
+    title = serializers.CharField()
     genre_id = serializers.IntegerField()
 
     def validate_genre_id(self, value):
