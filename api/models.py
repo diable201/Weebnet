@@ -103,6 +103,57 @@ class Anime(TimestampMixin):
         return f'{self.id}: {self.title} | {self.score}'
 
 
+class Manga(TimestampMixin):
+    ONGOING = 'ONGOING'
+    RELEASED = 'RELEASED'
+
+    MANGA_STATUS_CHOICES = (
+        (ONGOING, 'Онгоинг'),
+        (RELEASED, 'Выпущено'),
+    )
+
+    title = models.CharField(
+        max_length=200,
+        verbose_name='Название'
+    )
+    volumes = models.IntegerField(
+        default=0,
+        verbose_name='Количество томов'
+    )
+    chapters = models.IntegerField(
+        default=0,
+        verbose_name='Количество глав'
+    )
+    score = models.FloatField(
+        default=0.0,
+        verbose_name='Рейтинг'
+    )
+    status = models.CharField(
+        choices=MANGA_STATUS_CHOICES,
+        blank=True,
+        max_length=255,
+        verbose_name='Статус'
+    )
+    synopsis = models.TextField(
+        blank=True,
+        verbose_name='Синопсис'
+    )
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        null=True,
+        related_name='genre',
+        verbose_name='Жанр'
+    )
+
+    class Meta:
+        verbose_name = 'Манга'
+        verbose_name_plural = 'Манга'
+
+    def __str__(self):
+        return f'{self.id}: {self.title} | {self.score}'
+
+
 class Image(TimestampMixin):
     anime = models.ForeignKey(
         Anime,
@@ -120,7 +171,7 @@ class Image(TimestampMixin):
 
     class Meta:
         verbose_name = 'Изображение'
-        verbose_name_plural = 'ImИзображения'
+        verbose_name_plural = 'Изображения'
 
     def __str__(self):
         return f'{self.id}'

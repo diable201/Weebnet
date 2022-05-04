@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Anime, Genre
+from api.models import Anime, Genre, Manga
 
 
 class GenreBaseSerializer(serializers.ModelSerializer):
@@ -54,3 +54,17 @@ class AnimeRetrieveResponseSerializer(AnimeBaseSerializer):
 class AnimeListResponseSerializer(AnimeBaseSerializer):
     images = serializers.StringRelatedField(many=True, read_only=True)
     genre = serializers.StringRelatedField()
+
+
+class MangaBaseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Manga
+        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status')
+
+
+class MangaDetailSerializer(MangaBaseSerializer):
+
+    class Meta:
+        model = Manga
+        fields = ('id', 'title', 'volumes', 'score', 'status', 'synopsis', 'genre_id')
