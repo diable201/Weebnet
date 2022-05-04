@@ -5,7 +5,7 @@ from api.views import (
     GenreViewSet, GenreSearchView, AnimeViewSet,
     MangaViewSet, LightNovelViewSet, CommentViewSet,
     AnimeSearchView, LightNovelSearchView, MangaSearchView,
-    anime_top_ten, manga_top_ten
+    anime_top_ten, manga_top_ten, get_nsfw_anime
 )
 
 app_name = 'api'
@@ -62,6 +62,10 @@ urlpatterns = [
     path(
         'anime/top/',
         anime_top_ten
+    ),
+    path(
+        'anime/nsfw/',
+        get_nsfw_anime
     ),
     path(
         "manga/",

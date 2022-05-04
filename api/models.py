@@ -1,6 +1,7 @@
 from django.db import models
 
 import sso.models
+from api.managers import NSFWManager
 from api.utils import validate_size, validate_extension
 
 
@@ -88,6 +89,10 @@ class Anime(TimestampMixin):
         blank=True,
         verbose_name='Синопсис'
     )
+    is_adult = models.BooleanField(
+        default=False,
+        verbose_name='NSFW?'
+    )
     genre = models.ForeignKey(
         Genre,
         on_delete=models.CASCADE,
@@ -95,6 +100,9 @@ class Anime(TimestampMixin):
         related_name='anime',
         verbose_name='Жанр'
     )
+
+    objects = models.Manager()
+    adult_objects = NSFWManager()
 
     class Meta:
         verbose_name = 'Аниме'

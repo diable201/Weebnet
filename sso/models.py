@@ -5,10 +5,10 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 
-from .managers import UserManager
+from .managers import UserManager, NotDeletableModelMixin, ActiveUserManager
 
 
-class User(AbstractBaseUser, PermissionsMixin):
+class User(AbstractBaseUser, PermissionsMixin, NotDeletableModelMixin):
     email = models.EmailField('email address', unique=True)
     first_name = models.CharField('first name', max_length=30, blank=True)
     last_name = models.CharField('last name', max_length=30, blank=True)
@@ -18,6 +18,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_of_birth = models.DateField(null=True, blank=True)
 
     objects = UserManager()
+    active_objects = ActiveUserManager()
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

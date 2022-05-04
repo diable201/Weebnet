@@ -197,3 +197,10 @@ def manga_top_ten(request):
     manga = Manga.objects.all().order_by('-score')[:10]
     manga_json = [_.to_json() for _ in manga]
     return JsonResponse(manga_json, safe=False)
+
+
+def get_nsfw_anime(request):
+    logger.info("OH NO CRINGE")
+    anime = Anime.adult_objects.all()
+    anime_json = [_.to_json() for _ in anime]
+    return JsonResponse(anime_json, safe=False)
