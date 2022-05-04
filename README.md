@@ -15,7 +15,11 @@
 
 ---
 
-[https://waifu.now.sh/sfw/hug](https://waifu.now.sh/sfw/hug)
+<div align="center">
+  <kbd>
+    <img src="https://waifu.now.sh/sfw/hug" alt="">
+  </kbd>
+</div>
 
 ## Main Idea
 
