@@ -58,19 +58,19 @@ This includes anime TV series, feature films, and manga. The goal is to create a
       * b. using Environment variables (ex: token)
 
 ### Django Side
-3. Install `virtualvenv` if you don't have it
+1. Install `virtualvenv` if you don't have it
 ``` Shell
 $ pip install virtualenv
 ```
-4. Create virtualenv
+2. Create virtualenv
 ``` Shell
 $ virtualenv .venv
 ```
-5. Activate virtualenv
+3. Activate virtualenv
 ``` Shell
 $ source .venv/bin/activate
 ```
-6. Then can install all the required dependencies:
+4. Then can install all the required dependencies:
 ``` Shell
 $ cd Weebnet
 $ pip install -r requirements.txt
@@ -103,11 +103,7 @@ From the `Weebnet` folder. Server will be running on `http://localhost:8000/`
 ---
 
 ## Demo API
-
-<aside>
 👘 This is just predicted example of `GET` request via **Postman**
-
-</aside>
 
 ---
 
@@ -119,14 +115,11 @@ From the `Weebnet` folder. Server will be running on `http://localhost:8000/`
 
 ## Database
 
-<aside>
+
 🐘 Did you really name your son `Okabe; DROP TABLE users;`
 
-</aside>
-
 > PostgreSQL has been designed to reliably store your most valuable asset – your data.
-> 
-
+ 
 - Benefits of PostgreSQL
     - Open Source
     - Reduce Costs
@@ -156,10 +149,8 @@ From the `Weebnet` folder. Server will be running on `http://localhost:8000/`
 
 ## Deploy
 
-<aside>
-🚢 There are many **cloud computing** services: DigitalOcean, Microsoft Azure, AWS, etc...
 
-</aside>
+🚢 There are many **cloud computing** services: DigitalOcean, Microsoft Azure, AWS, etc...
 
 If I will have enough time I would deploy my backend API on some cloud server. I think it should be good practice for me as backend developer.
 

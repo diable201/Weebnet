@@ -90,6 +90,7 @@ class AnimeListResponseSerializer(AnimeBaseSerializer):
 class MangaBaseSerializer(serializers.ModelSerializer):
     title = serializers.CharField()
     genre_id = serializers.IntegerField()
+    manga_images = ImageNestedSerializer(many=True, read_only=True)
 
     def validate_genre_id(self, value):
         if value and not Genre.objects.filter(id=value).exists():
@@ -111,9 +112,20 @@ class MangaBaseSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Рейтинг должен быть больше положительным числом")
         return value
 
+    def create(self, validated_data):
+        manga_images = self.context.get('view').request.FILES
+        manga = Manga.objects.create(**validated_data)
+        for image in manga_images.values():
+            try:
+                validate_extension(image)
+            except:
+                raise serializers.ValidationError("Неподходящее разрешение")
+            Image.objects.create(manga=manga, image=image)
+        return manga
+
     class Meta:
         model = Manga
-        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status', 'genre_id')
+        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status', 'genre_id', 'manga_images')
 
 
 class MangaDetailSerializer(MangaBaseSerializer):
@@ -124,10 +136,22 @@ class MangaDetailSerializer(MangaBaseSerializer):
 
 
 class LightNovelBaseSerializer(serializers.ModelSerializer):
+    light_novel_images = ImageNestedSerializer(many=True, read_only=True)
 
     class Meta:
         model = LightNovel
-        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status')
+        fields = ('id', 'title', 'volumes', 'chapters', 'score', 'status', 'light_novel_images')
+
+    def create(self, validated_data):
+        light_novel_images = self.context.get('view').request.FILES
+        light_novel = Manga.objects.create(**validated_data)
+        for image in light_novel_images.values():
+            try:
+                validate_extension(image)
+            except:
+                raise serializers.ValidationError("Неподходящее разрешение")
+            Image.objects.create(light_novel=light_novel, image=image)
+        return light_novel
 
 
 class LightNovelDetailSerializer(LightNovelBaseSerializer):

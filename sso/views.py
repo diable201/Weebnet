@@ -1,3 +1,4 @@
+import logging
 from django.http import HttpResponse
 from rest_framework import status, viewsets, mixins
 from rest_framework.decorators import api_view
@@ -7,12 +8,15 @@ from rest_framework.views import APIView
 from sso.serializers import UserSignUpSerializer, UserBaseSerializer, UserDetailSerializer
 from sso.models import User
 
+logger = logging.getLogger(__name__)
+
 
 class RegistrationAPIView(APIView):
     permission_classes = (AllowAny,)
     serializer_class = UserSignUpSerializer
 
     def post(self, request):
+        logger.info("LOG MESSAGE")
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -21,6 +25,7 @@ class RegistrationAPIView(APIView):
 
 @api_view(['GET'])
 def my_profile(request):
+    logger.info("LOG MESSAGE")
     if request.user.id:
         user = User.objects.get(id=request.user.id)
         serializer = UserBaseSerializer(user)

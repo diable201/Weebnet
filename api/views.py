@@ -1,3 +1,4 @@
+import logging
 from django.http import JsonResponse
 from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
@@ -12,6 +13,7 @@ from api.serializers import (
     LightNovelBaseSerializer, LightNovelDetailSerializer,
     CommentRequestSerializer, CommentListSerializer
 )
+logger = logging.getLogger(__name__)
 
 
 class GenreViewSet(
@@ -74,6 +76,7 @@ class AnimeSearchView(APIView):
 
     @action(methods=["GET"], detail=False)
     def get(self, request):
+        logger.info("LOG MESSAGE")
         search = self.request.query_params.get('search', None)
         if search:
             queryset = self.queryset.filter(title__icontains=search)
@@ -108,6 +111,7 @@ class MangaSearchView(APIView):
 
     @action(methods=["GET"], detail=False)
     def get(self, request):
+        logger.info("LOG MESSAGE")
         search = self.request.query_params.get('search', None)
         if search:
             queryset = self.queryset.filter(title__icontains=search)
@@ -142,6 +146,7 @@ class LightNovelSearchView(APIView):
 
     @action(methods=["GET"], detail=False)
     def get(self, request):
+        logger.info("LOG MESSAGE")
         search = self.request.query_params.get('search', None)
         if search:
             queryset = self.queryset.filter(title__icontains=search)
@@ -165,6 +170,7 @@ class CommentViewSet(viewsets.GenericViewSet):
 
     @action(methods=('post',), detail=False)
     def create_comment(self, request, *args, **kwargs):
+        logger.info("LOG MESSAGE")
         serializer = self.get_serializer(data=self.request.data)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
@@ -173,18 +179,21 @@ class CommentViewSet(viewsets.GenericViewSet):
 
     @action(methods=('get',), detail=False)
     def get_comments(self, request, *args, **kwargs):
+        logger.info("LOG MESSAGE")
         comments = self.get_queryset()
         serializer = self.get_serializer(comments, many=True)
         return Response(serializer.data)
 
 
 def anime_top_ten(request):
+    logger.info("LOG MESSAGE")
     anime = Anime.objects.all().order_by('-score')[:10]
     anime_json = [_.to_json() for _ in anime]
     return JsonResponse(anime_json, safe=False)
 
 
 def manga_top_ten(request):
+    logger.info("LOG MESSAGE")
     manga = Manga.objects.all().order_by('-score')[:10]
     manga_json = [_.to_json() for _ in manga]
     return JsonResponse(manga_json, safe=False)

@@ -150,3 +150,39 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ),
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s -- %(asctime)s: %(message)s',
+        },
+        'simple': {
+            'format': '%(levelname)s -- %(message)s'
+        }
+    },
+    'handlers': {
+        'file_handler': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'weebnet.log',
+            'formatter': 'verbose'
+        },
+        'console_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        }
+    },
+    'loggers': {
+        'sso': {
+            'handlers': ['file_handler', 'console_handler'],
+            'level': 'DEBUG',
+        },
+        'api': {
+            'handlers': ['file_handler', 'console_handler'],
+            'level': 'DEBUG',
+        },
+    },
+}
