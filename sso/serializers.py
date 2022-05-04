@@ -20,8 +20,9 @@ class UserSignUpSerializer(UserBaseSerializer):
         return User.objects.create_user(**validated_data)
 
 
-class UserDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = User
-        fields = ('id', 'email', 'first_name', 'last_name', 'date_of_birth')
+class UserDetailSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    email = serializers.EmailField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    date_of_birth = serializers.DateTimeField()

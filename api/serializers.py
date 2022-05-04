@@ -1,6 +1,6 @@
 from rest_framework import serializers
-
-from api.models import Anime, Genre, Manga, LightNovel
+from api.models import Anime, Genre, Manga, LightNovel, Image, Comment
+from api.utils import validate_extension
 
 
 class GenreBaseSerializer(serializers.ModelSerializer):
@@ -19,6 +19,12 @@ class GenreSerializer(serializers.ModelSerializer):
         fields = ('id',)
 
 
+class ImageNestedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ('image', 'anime', 'manga', 'light_novel')
+
+
 class AnimeBaseSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
     created_at = serializers.DateTimeField(read_only=True)
@@ -30,9 +36,34 @@ class AnimeBaseSerializer(serializers.Serializer):
     status = serializers.ChoiceField(choices=Anime.ANIME_STATUS_CHOICES)
     synopsis = serializers.CharField()
     genre_id = serializers.IntegerField()
+    anime_images = ImageNestedSerializer(many=True, read_only=True)
+
+    def validate_genre_id(self, value):
+        if value and not Genre.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Жанра не существует")
+        return value
+
+    def validate_episodes(self, value):
+        if value and value < 0:
+            raise serializers.ValidationError("Количество эпизодов должно быть больше нуля")
+        return value
+
+    def validate_score(self, value):
+        if value and value < 0:
+            raise serializers.ValidationError("Рейтинг должен быть больше положительным числом")
+        return value
 
     def create(self, validated_data):
-        return Anime.objects.create(**validated_data)
+        anime_images = self.context.get('view').request.FILES
+        anime = Anime.objects.create(**validated_data)
+        for image in anime_images.values():
+            try:
+                validate_extension(image)
+            except:
+                raise serializers.ValidationError("Неподходящее разрешение")
+            Image.objects.create(anime=anime, image=image)
+        return anime
+
 
     def update(self, instance, validated_data):
         instance.title = validated_data.get('title', instance.title)
@@ -47,12 +78,12 @@ class AnimeBaseSerializer(serializers.Serializer):
 
 
 class AnimeRetrieveResponseSerializer(AnimeBaseSerializer):
-    images = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    anime_images = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     genre = serializers.StringRelatedField()
 
 
 class AnimeListResponseSerializer(AnimeBaseSerializer):
-    images = serializers.StringRelatedField(many=True, read_only=True)
+    anime_images = serializers.StringRelatedField(many=True, read_only=True)
     genre = serializers.StringRelatedField()
 
 
@@ -82,3 +113,31 @@ class LightNovelDetailSerializer(LightNovelBaseSerializer):
     class Meta:
         model = LightNovel
         fields = ('id', 'title', 'volumes', 'score', 'status', 'synopsis', 'genre_id')
+
+
+class CommentRequestSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(
+        default=serializers.CurrentUserDefault()
+    )
+
+    class Meta:
+        model = Comment
+        fields = ('anime', 'content', 'user')
+
+
+class CommentListSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField(
+        source='user.first_name'
+    )
+
+    last_name = serializers.CharField(
+        source='user.last_name'
+    )
+
+    email = serializers.CharField(
+        source='user.email'
+    )
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'first_name', 'last_name', 'email', 'content',)

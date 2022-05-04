@@ -1,5 +1,6 @@
 from django.db import models
 
+import sso.models
 from api.utils import validate_size, validate_extension
 
 
@@ -210,13 +211,30 @@ class Image(TimestampMixin):
         Anime,
         on_delete=models.DO_NOTHING,
         null=True,
-        related_name='images',
+        related_name='anime_images',
         verbose_name='Аниме'
+    )
+    manga = models.ForeignKey(
+        Manga,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+        related_name='manga_images',
+        verbose_name='Манга'
+    )
+    light_novel = models.ForeignKey(
+        LightNovel,
+        on_delete=models.DO_NOTHING,
+        null=True,
+        blank=True,
+        related_name='light_novel_images',
+        verbose_name='Ранобэ'
     )
     image = models.ImageField(
         upload_to='images/',
         validators=[validate_size, validate_extension],
         null=True,
+        blank=True,
         verbose_name='Изображение'
     )
 
@@ -226,3 +244,30 @@ class Image(TimestampMixin):
 
     def __str__(self):
         return f'{self.id}'
+
+
+class Comment(TimestampMixin):
+    anime = models.ForeignKey(
+        Anime,
+        on_delete=models.CASCADE,
+        verbose_name='Аниме'
+    )
+
+    user = models.ForeignKey(
+        sso.models.User,
+        on_delete=models.CASCADE,
+        verbose_name='Пользователь'
+    )
+
+    content = models.CharField(
+        max_length=255,
+        verbose_name='Текст'
+    )
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
+    def __str__(self):
+        return f"{self.user}, {self.anime}, {self.content}"
+

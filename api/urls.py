@@ -1,7 +1,7 @@
 from django.urls import path
 from rest_framework.routers import DefaultRouter
 
-from api.views import GenreViewSet, GenreSearchView, AnimeViewSet, MangaViewSet, LightNovelViewSet
+from api.views import GenreViewSet, GenreSearchView, AnimeViewSet, MangaViewSet, LightNovelViewSet, CommentViewSet
 
 app_name = 'api'
 
@@ -87,6 +87,22 @@ urlpatterns = [
                 'delete': 'destroy'
             }),
         name="get/put light novel",
+    ),
+    path(
+        'comments/',
+        CommentViewSet.as_view(
+            {
+                'post': 'create_comment'
+            }),
+        name='create comment'
+    ),
+    path(
+        '<int:pk>/comments/',
+        CommentViewSet.as_view(
+            {
+                'get': 'get_comments'
+            }),
+        name='get comments'
     ),
 ]
 

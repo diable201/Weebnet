@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Anime, Genre, Image, Manga, LightNovel
+from .models import Anime, Genre, Image, Manga, LightNovel, Comment
 
 
 @admin.register(Anime)
@@ -64,5 +64,13 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'anime',
+        'manga',
+        'light_novel',
         'image'
     )
+
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'content')
+    search_fields = ('user', 'content')
